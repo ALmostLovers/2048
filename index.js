@@ -30,39 +30,78 @@ graphics.drawRect(app.renderer.width/10-5, app.renderer.height/8*3-5,305, 305);
 app.stage.addChild(graphics);
 
 //生成随机数,赋值给数组prid
-var columx = generateRandomNumber();
-var columy = generateRandomNumber();
-grid[columx][columy]=2;
+newcell();
+
 
 
 //绘框
-for(var i = 0;i<4;i++)
-{
-   for(var j = 0;j<4;j++)
-   {
-       drawcell(i,j,grid[i][j],0xFFFAF0);
-   }
+function flushUI() {
+    for (var i = 0; i < 4; i++) {
+        for (var j = 0; j < 4; j++) {
+            drawcell(i, j);
+        }
+    }
+}
+flushUI();
+
+
+
+
+document.addEventListener('keydown', function (event) {
+    if (event.keyCode === 39) {
+        moveCellToRight();
+        flushUI();
+    }
+});
+
+function newcell() {
+    var columx = generateRandomNumber();
+    var columy = generateRandomNumber();
+    grid[columx][columy] = 2;
+}
+function moveCellToRight() {
+    for (var rowIndex = 0; rowIndex < 4; rowIndex++) {
+        for (var columnIndex = 2; columnIndex >= 0; columnIndex--) {
+            if (grid[rowIndex][columnIndex] === 0) continue;
+
+            var theEmptyCellIndex = findTheFirstRightCell(rowIndex, columnIndex);
+            if (theEmptyCellIndex !== -1) {
+                grid[rowIndex][theEmptyCellIndex] = grid[rowIndex][columnIndex];
+                grid[rowIndex][columnIndex] = 0;
+
+            }
+            var currentIndex = theEmptyCellIndex === -1 ? columnIndex : theEmptyCellIndex;
+
+            if (grid[rowIndex][currentIndex] === grid[rowIndex][currentIndex + 1]) {
+                grid[rowIndex][currentIndex+ 1] += grid[rowIndex][currentIndex];
+                grid[rowIndex][currentIndex] = 0;
+            }
+
+        }
+    }
 }
 
+function findTheFirstRightCell(rowIndex, columnIndex) {
+    for (var i = 3; i > columnIndex; i--) {
+        if (grid[rowIndex][i] === 0) {
+            return i;
+        }
+    }
 
+    return -1;
+}
 
+function drawcell(columx,columy) {
+    var num=grid[columx][columy];
+    var color=GetColor(num);
 
-
- document.addEventListener("keydown",function (event) {
-    console.log("yes");
-})
-
-
-
-function drawcell(columx,columy,num) {
+    var graphics = new PIXI.Graphics();
+    graphics.beginFill(color, 1);
+    graphics.drawRect(app.renderer.width / 10 + columy * 75, app.renderer.height / 8 * 3 + columx * 75, 70, 70);
+    app.stage.addChild(graphics);
 
     if(num!=0)
     {
-        var graphics = new PIXI.Graphics();
-        graphics.beginFill(0xFFFAF0, 1);
-        graphics.drawRect(app.renderer.width / 10 + columy * 75, app.renderer.height / 8 * 3 + columx * 75, 70, 70);
-        app.stage.addChild(graphics);
-
         var number = new PIXI.Text(num, {
             fontSize: 50,
             fill: 0xC7A97C
@@ -72,17 +111,19 @@ function drawcell(columx,columy,num) {
         number.y = app.renderer.height / 8 * 3 + 35 + columx * 75;
         app.stage.addChild(number);
     }
-    else
-    {
-        var graphics = new PIXI.Graphics();
-        graphics.beginFill(0xFFEBCD, 1);
-        graphics.drawRect(app.renderer.width / 10 + columy * 75, app.renderer.height / 8 * 3 + columx * 75, 70, 70);
-        app.stage.addChild(graphics);
-    }
+
 
 }
+function GetColor(num) {
+    var colorValue = {
+        0: 0xFFEBCD,
+        2: 0xFFFAF0,
+        4: 0xFDF5E6
+    };
 
+    return colorValue[num];
+
+}
 function generateRandomNumber() {
-
     return Math.floor(Math.random()*4);
 }
