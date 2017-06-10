@@ -5,7 +5,8 @@ var app = new PIXI.Application(window.innerWidth, window.innerHeight, {backgroun
 document.body.appendChild(app.view);
 
 var basicText = new PIXI.Text('2048',{
-    fontSize:100
+    fontSize:100,
+    fill:0xEBE0D0
 });
 basicText.anchor.set(0.5);
 basicText.x = app.renderer.width/2;
@@ -29,7 +30,7 @@ for(var i = 0;i<4;i++)
        var graphics = new PIXI.Graphics();
 
        graphics.beginFill(0xEBE0D0, 1);
-       graphics.drawRect(app.renderer.width/9+j*85, app.renderer.height/8*3+i*85 ,80, 80);
+       graphics.drawRect(app.renderer.width/10+j*75, app.renderer.height/8*3+i*75 ,70, 70);
        app.stage.addChild(graphics);
    }
 
