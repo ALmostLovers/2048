@@ -32,9 +32,44 @@ app.stage.addChild(graphics);
 //生成随机数,赋值给数组prid
 newcell();
 
-
+newcell();
 
 //绘框
+
+flushUI();
+
+document.addEventListener('keydown', function (event) {
+   //右
+    if (event.keyCode === 39) {
+        moveCellToRight();
+        newcell();
+        flushUI();
+    }
+    if (event.keyCode ===38) {
+        rotateArray(1);
+        moveCellToRight();
+        rotateArray(3);
+        newcell();
+        flushUI();
+    }
+
+    if (event.keyCode === 37) {
+        rotateArray(2);
+        moveCellToRight();
+        rotateArray(2);
+        newcell();
+        flushUI();
+    }
+
+    if (event.keyCode === 40) {
+        rotateArray(3);
+        moveCellToRight();
+        rotateArray(1);
+        newcell();
+        flushUI();
+    }
+});
+
 function flushUI() {
     for (var i = 0; i < 4; i++) {
         for (var j = 0; j < 4; j++) {
@@ -42,23 +77,21 @@ function flushUI() {
         }
     }
 }
-flushUI();
-
-
-
-
-document.addEventListener('keydown', function (event) {
-    if (event.keyCode === 39) {
-        moveCellToRight();
-        flushUI();
-    }
-});
-
+function generateRandomNumber() {
+    return Math.floor(Math.random()*4);
+}
 function newcell() {
     var columx = generateRandomNumber();
     var columy = generateRandomNumber();
-    grid[columx][columy] = 2;
+    while(grid[columx][columy]!==0)
+    {
+        columx = generateRandomNumber();
+        columy = generateRandomNumber();
+    }
+        grid[columx][columy] = 2;
 }
+
+
 function moveCellToRight() {
     for (var rowIndex = 0; rowIndex < 4; rowIndex++) {
         for (var columnIndex = 2; columnIndex >= 0; columnIndex--) {
@@ -80,7 +113,6 @@ function moveCellToRight() {
         }
     }
 }
-
 function findTheFirstRightCell(rowIndex, columnIndex) {
     for (var i = 3; i > columnIndex; i--) {
         if (grid[rowIndex][i] === 0) {
@@ -90,7 +122,19 @@ function findTheFirstRightCell(rowIndex, columnIndex) {
 
     return -1;
 }
+function rotateArray(rotateCount) {
+    for (var i = 0 ; i < rotateCount; i ++) {
+        grid = rotateArrayToRightOnce(grid);
+    }
 
+    function rotateArrayToRightOnce(array) {
+        return array.map((row, rowIndex) => {
+                return row.map((item, columnIndex) => {
+                    return array[3 - columnIndex][rowIndex];
+    })
+    })
+    }
+}
 function drawcell(columx,columy) {
     var num=grid[columx][columy];
     var color=GetColor(num);
@@ -118,12 +162,19 @@ function GetColor(num) {
     var colorValue = {
         0: 0xFFEBCD,
         2: 0xFFFAF0,
-        4: 0xFDF5E6
+        4: 0xFDF5E6,
+        8: 0xFFE4B5,
+        16:0xFFDAB9,
+        32:0xF4A460,
+        64:0xFFA500,
+        128:0xFF8C00,
+        256:0xDAA520,
+        512:0xD2691E,
+        1024:0xFF7F50,
+        2048:0xFFA07A,
+        4096:0xFF6347
     };
 
     return colorValue[num];
 
-}
-function generateRandomNumber() {
-    return Math.floor(Math.random()*4);
 }
